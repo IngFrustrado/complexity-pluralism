@@ -78,7 +78,7 @@ for i in range(len(locs)):
     ax[locs[i]].get_yaxis().tick_left()  
 
 plt.tight_layout()
-plt.savefig('../output/fig02_transition-function.pdf', bbox_inches='tight')
+plt.savefig('output/fig02_transition-function.pdf', bbox_inches='tight')
 
 # Figure 3: examples for the Polya process
 
@@ -123,4 +123,4 @@ for i in range(len(locs)):
     ax[locs[i]].get_yaxis().tick_left()  
 
 plt.tight_layout()
-plt.savefig('../output/fig03_polya-process.pdf', bbox_inches='tight')
+plt.savefig('output/fig03_polya-process.pdf', bbox_inches='tight')

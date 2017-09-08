@@ -27,6 +27,38 @@ import itertools
 import numpy as np
 import matplotlib.pyplot as plt
 
+def add_arrow(line, position=None, direction='right', size=15, color=None):
+    """
+    add an arrow to a line.
+
+    line:       Line2D object
+    position:   x-position of the arrow. If None, mean of xdata is taken
+    direction:  'left' or 'right'
+    size:       size of the arrow in fontsize points
+    color:      if None, line color is taken.
+    """
+    if color is None:
+        color = line.get_color()
+
+    xdata = line.get_xdata()
+    ydata = line.get_ydata()
+
+    if position is None:
+        position = xdata.mean()
+    # find closest index
+    start_ind = np.argmin(np.absolute(xdata - position))
+    if direction == 'right':
+        end_ind = start_ind + 1
+    else:
+        end_ind = start_ind - 1
+
+    line.axes.annotate('',
+        xytext=(xdata[start_ind], ydata[start_ind]),
+        xy=(xdata[end_ind], ydata[end_ind]),
+        arrowprops=dict(arrowstyle="->", color=color),
+        size=size
+    )
+
 # Figure 2: illustration of the transition function
 
 def prob_func(shares):
@@ -63,10 +95,34 @@ locs = list(itertools.product(range(2), range(2)))
 nbs_big = ["Two", "Three", "Four", "Five"]
 nbs_small = ["two", "three", "four", "five"]
 
+fixed_point = [int(x * 100) for x in [1/2, 1/3, 1/4, 1/5]]
+
 plt.clf()
 fig, ax = plt.subplots(2,2, figsize=(12, 9))
 for i in range(len(locs)):
-    ax[locs[i]].plot(shares_x_i, probs[i])
+    probs[i] = np.asarray(probs[i])
+    z = ax[locs[i]].plot(shares_x_i, probs[i], 
+                         color="#0080FF", alpha=0.5)
+    x = ax[locs[i]].plot(shares_x_i[1:fixed_point[i]+4], 
+                         probs[i][1:fixed_point[i]+4], 
+                         color="#0080FF", linestyle="None")[0]
+    y = ax[locs[i]].plot(shares_x_i[fixed_point[i]: ][::2], 
+                         probs[i][fixed_point[i]:][::2], 
+                         color="#0080FF", linestyle="None")[0]
+    
+    ax[locs[i]].plot(fixed_point[i]/100, fixed_point[i]/100, 
+                     marker='o', markersize=8, color="#0080FF")
+
+    if i <= 1:
+        for j in shares_x_i[2+1:fixed_point[i]][::2]:
+            add_arrow(x, j,direction="left", size=20)
+        for j in shares_x_i[8+fixed_point[i]:-2][::2]:
+            add_arrow(y, j, direction="right", size=20)
+    else:
+        for j in shares_x_i[2+1:fixed_point[i]][::2]:
+            add_arrow(x, j,direction="left", size=20)
+        for j in shares_x_i[4+fixed_point[i]:-2][::2]:
+            add_arrow(y, j, direction="right", size=20) 
     ax[locs[i]].set_title(nbs_big[i] + " research programs", fontsize=10)
     ax[locs[i]].plot(shares_x_i, shares_x_i, linestyle="--", color="silver")
     ax[locs[i]].set_xlabel("x_i")
@@ -75,10 +131,10 @@ for i in range(len(locs)):
     ax[locs[i]].spines["top"].set_visible(False)  
     ax[locs[i]].spines["right"].set_visible(False)  
     ax[locs[i]].get_xaxis().tick_bottom()  
-    ax[locs[i]].get_yaxis().tick_left()  
+    ax[locs[i]].get_yaxis().tick_left() 
 
 plt.tight_layout()
-plt.savefig('../output/fig02_transition-function.pdf', bbox_inches='tight')
+plt.savefig('output/fig02_transition-function.pdf', bbox_inches='tight')
 
 # Figure 3: examples for the Polya process
 
@@ -123,4 +179,4 @@ for i in range(len(locs)):
     ax[locs[i]].get_yaxis().tick_left()  
 
 plt.tight_layout()
-plt.savefig('../output/fig03_polya-process.pdf', bbox_inches='tight')
+plt.savefig('output/fig03_polya-process.pdf', bbox_inches='tight')
