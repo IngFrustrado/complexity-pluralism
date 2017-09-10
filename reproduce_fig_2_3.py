@@ -27,6 +27,8 @@ import itertools
 import numpy as np
 import matplotlib.pyplot as plt
 
+np.random.seed(1) # The seed "1" replicates the figures of the paper
+
 def add_arrow(line, position=None, direction='right', size=15, color=None):
     """
     add an arrow to a line.
@@ -110,9 +112,10 @@ for i in range(len(locs)):
                          probs[i][fixed_point[i]:][::2], 
                          color="#0080FF", linestyle="None")[0]
     
-    ax[locs[i]].plot(fixed_point[i]/100, fixed_point[i]/100, 
-                     marker='o', markersize=8, color="#0080FF")
-
+    ax[locs[i]].plot(fixed_point[i]/100, fixed_point[i]/100, marker='o', markersize=8, color="#0080FF")
+    ax[locs[i]].plot(0, 0, marker='o', markersize=8, color="#0080FF")
+    ax[locs[i]].plot(1, 1, marker='o', markersize=8, color="#0080FF")
+                     
     if i <= 1:
         for j in shares_x_i[2+1:fixed_point[i]][::2]:
             add_arrow(x, j,direction="left", size=20)
